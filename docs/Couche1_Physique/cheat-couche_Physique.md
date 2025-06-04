@@ -1,93 +1,60 @@
-### Exemple de fichier pour la Couche 1 (Physique)
+# Couche 1 – Physique
 
-**Chemin :**  
-`docs/Couche1_Physique/cheat-couche_Physique.md`
+## 1. Types d'attaques physiques
 
-```markdown
-# Couche 1 (Physique) – Attaques et Outils
+- **Perturbation/Interruption physique**  
+  Actions visant à dégrader ou stopper le fonctionnement d’un réseau en agissant sur le matériel : débranchement de câbles, sabotage, création d’interférences (ex. : brouillage d’ondes radio).
 
-**Version Testée :**
-- HackRF One v1.2
-- RTL-SDR
+- **Sniffing physique**  
+  Connexion physique à un câble réseau (tap, répéteur…) pour intercepter le trafic.
 
-**Description :**  
-Ce document recense les outils et attaques disponibles pour la couche Physique du modèle OSI.
+- **Détection de topologie physique**  
+  Cartographier les connexions, identifier les points faibles et les interconnexions (ex. : testeur de câble).
 
 ---
 
-### Outil: HackRF
-**Description :**  
-HackRF est un émetteur-récepteur SDR polyvalent capable de générer, scanner et analyser des signaux radio de 1 MHz à 6 GHz.
+## 2. Outils et méthodes
 
-#### Attaque: Brouillage électromagnétique (EM Flood)
-*Détails de l'attaque :*  
-Saturer une bande de fréquence en émettant un signal bruité pour perturber les communications.
+### ⚡ Attaque : Sniffing physique
 
-###### Commande: Scanner les fréquences
-```bash
-hackrf_sweep -f 2400:2500 -w 1000000 -l 32 -g 32
-```
-Détails :
-- Plage de fréquences : 2400–2500 MHz.
-- Largeur de bande : 1 MHz.
-- Réglages de gain RX : 32.
-
-###### Commande: Générer un signal de brouillage
-```bash
-hackrf_transfer -t noise.bin -f 2400000000 -s 20000000 -x 47
-```
-Détails :
-- Fichier de bruit : noise.bin.
-- Fréquence cible : 2.4 GHz.
-- Taux d’échantillonnage : 20 MHz.
-- Gain TX : 47.
-
-###### Commande: Enregistrer un signal
-```bash
-hackrf_transfer -r capture.raw -f 2400000000 -s 20000000 -l 32 -g 32
-```
-Détails :
-- Fichier de capture : capture.raw.
-- Réglages de gain RX : 32.
-
-#### Attaque: Sniffing radio
-*Détails de l'attaque :*  
-Capturer et analyser les signaux radio pour réaliser du reverse engineering ou identifier des transmissions spécifiques.
-
-###### Commande: Capturer une fréquence spécifique
-```bash
-hackrf_transfer -r capture_sniff.raw -f 2450000000 -s 20000000 -l 32 -g 32
-```
-Détails :
-- Capture sur 2.45 GHz.
+#### Outil : **Wireshark** (en mode filaire)
+- **Description** : Permet de capturer tous les paquets circulant physiquement sur un segment réseau.
+- **Pourquoi l’utiliser ?** :  
+  - Identifier des failles physiques (ex. : hub non sécurisé)
+  - Prouver qu’un réseau n’est pas isolé
+- **Installation** :  
+  - Debian/Ubuntu : `sudo apt install wireshark`
+- **Commande** :  
+  - Lancer Wireshark, choisir l’interface filaire détectée, démarrer la capture.
+- **Note** : Nécessite souvent d’être root.
 
 ---
 
-### Outil: RTL-SDR
-**Description :**  
-RTL-SDR est un récepteur radio abordable utilisé pour la réception passive des signaux radio.
+### ⚡ Attaque : Détection de topologie
 
-#### Attaque: Surveillance des signaux
-*Détails de l'attaque :*  
-Surveiller une plage de fréquences pour détecter des transmissions suspectes.
+#### Outil : **Mii-tool**
+- **Description** : Vérifie l’état physique d’un port Ethernet, détecte si le câble est connecté/actif.
+- **Installation** :  
+  - Debian/Ubuntu : `sudo apt install net-tools`
+- **Commande** :  
+  - `sudo mii-tool eth0`
 
-###### Commande: Lancer rtl_power pour surveiller une plage
-```bash
-rtl_power -f 100e6:200e6:1e6 -g 50 output.csv
-```
-Détails :
-- Plage : 100–200 MHz avec incréments de 1 MHz.
-- Gain : 50.
-- Sortie : fichier CSV.
+#### Outil : **Câble testeur** (matériel physique)
+- **Description** : Permet de vérifier la continuité d’un câble, repérer un mauvais branchement ou une rupture.
 
-#### Attaque: Capture de signal
-*Détails de l'attaque :*  
-Capturer et enregistrer des signaux radio pour une analyse ultérieure.
+---
 
-###### Commande: Enregistrer un signal avec rtl_fm
-```bash
-rtl_fm -f 101.1e6 -s 22050 - | aplay -r 22050 -f S16_LE
-```
-Détails :
-- Capture sur 101.1 MHz.
-```
+### ⚡ Attaque : Perturbation
+
+#### Outil : **Hping3**
+- **Description** : Générateur de trafic (flood) pour tester la résilience d’un lien physique.
+- **Installation** : `sudo apt install hping3`
+- **Commande** :  
+  - `sudo hping3 --icmp -i u1 [IP cible]`
+- **Note** : À utiliser sur un labo/test autorisé seulement.
+
+---
+
+## 3. Contribution
+
+> Pour ajouter une attaque physique ou un outil, expliquez bien le contexte et l’intérêt, et fournissez les commandes ou références nécessaires.
