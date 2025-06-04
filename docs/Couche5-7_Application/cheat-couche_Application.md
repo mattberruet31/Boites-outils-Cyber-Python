@@ -1,123 +1,89 @@
-# Couche 5-7 (Application) – Attaques et Outils
+# Couches 5-7 – Application
 
-**Version Testée :**
-- Sqlmap 1.6.x
-- Burp Suite Community 2021.10
-- Nikto 2.5.x
+## 1. Types d’attaques sur la couche Application
 
-**Description :**  
-Ce document recense les outils et attaques disponibles pour la couche Application (couches 5 à 7) du modèle OSI.  
-Cette couche concerne l’interaction avec les applications web et les services, incluant l’injection SQL, la manipulation de requêtes HTTP et la découverte de vulnérabilités dans les serveurs web.  
+- **Scan de vulnérabilités Web**  
+  Rechercher automatiquement des failles connues sur des serveurs ou applications web.
 
----
+- **Brute force/dictionnaire**  
+  Tester un grand nombre d’identifiants ou d’URLs pour trouver des accès ou des fichiers cachés.
 
-### Outil: Sqlmap
-**Description :**  
-Sqlmap est un outil d’automatisation pour détecter et exploiter des vulnérabilités SQL dans les applications web.
+- **Fuzzing**  
+  Envoyer des données aléatoires ou malicieuses pour déclencher un comportement inattendu (plantage, RCE, etc.)
 
-#### Attaque: Détection d'injection SQL
-*Détails de l'attaque :*  
-Détecter automatiquement les vulnérabilités d'injection SQL sur une URL cible.
-
-###### Commande: Détecter une injection SQL
-```bash
-sqlmap -u "http://site.com/page?id=1" --batch
-```
-Détails :
-- Utilise le mode batch pour automatiser les choix.
-- Cible : http://site.com/page?id=1
-
-#### Attaque: Extraction des bases de données
-*Détails de l'attaque :*  
-Extraire la liste des bases de données présentes sur le serveur vulnérable.
-
-###### Commande: Extraire les bases de données
-```bash
-sqlmap -u "http://site.com/page?id=1" --dbs
-```
-Détails :
-- Affiche la liste des bases de données disponibles.
-
-#### Attaque: Dump d'une table spécifique
-*Détails de l'attaque :*  
-Extraire le contenu d'une table précise après avoir sélectionné la base de données.
-
-###### Commande: Dump d'une table spécifique
-```bash
-sqlmap -u "http://site.com/page?id=1" -D nom_de_base -T nom_de_table --dump
-```
-Détails :
-- Remplacez "nom_de_base" et "nom_de_table" par les valeurs correspondantes.
-
-#### Attaque: Bypass WAF
-*Détails de l'attaque :*  
-Utiliser des techniques de contournement pour échapper aux Web Application Firewalls.
-
-###### Commande: Bypass WAF avec tamper
-```bash
-sqlmap -u "http://site.com/page?id=1" --tamper=space2comment
-```
-Détails :
-- Utilise le script tamper "space2comment" pour contourner certaines protections.
+- **Injection**  
+  Tester l’injection de code dans des formulaires, URL ou headers (SQLi, XSS…).
 
 ---
 
-### Outil: Burp Suite
-**Description :**  
-Burp Suite est une plateforme intégrée pour tester la sécurité des applications web, offrant des fonctionnalités de proxy, scanner et intruder.
+## 2. Outils et méthodes
 
-#### Attaque: Analyse et Scan Web
-*Détails de l'attaque :*  
-Utiliser Burp Suite pour scanner les vulnérabilités d'une application web.
+### ⚡ Attaque : Scan de vulnérabilités
 
-###### Commande: Lancer Burp Suite Community
-```bash
-java -jar burpsuite_community.jar
-```
-Détails :
-- Démarrage de l'interface graphique de Burp Suite Community.
-- Nécessite Java installé sur le système.
+#### Outil : **Nikto**
+- **Description** : Scanner d’applications web pour vulnérabilités classiques (fichiers dangereux, headers, CGI…).
+- **Pourquoi l’utiliser ?** :  
+  - Rapide, facile, bon en automatisation
+- **Installation** :  
+  - `sudo apt install nikto`
+- **Commande** :  
+  - `nikto -h http://[IP ou domaine cible]`
 
-#### Attaque: Interception de requêtes HTTP
-*Détails de l'attaque :*  
-Intercepter et modifier en temps réel les requêtes HTTP pour tester la robustesse des contrôles d'accès.
-
-###### Commande: Lancer Burp avec configuration personnalisée
-```bash
-java -jar burpsuite_community.jar --config-file=burp_config.json
-```
-Détails :
-- Utilise un fichier de configuration (burp_config.json) pour lancer Burp Suite avec des paramètres pré-définis.
+#### Outil : **OpenVAS** (Greenbone)
+- **Description** : Scanner de vulnérabilités réseau/applications très complet.
+- **Installation** :  
+  - Guide officiel sur [Greenbone.net](https://www.greenbone.net/)
+- **Utilisation** : Interface web ou CLI.
 
 ---
 
-### Outil: Nikto
-**Description :**  
-Nikto est un scanner de serveurs web open source qui identifie les problèmes de sécurité et les vulnérabilités connues dans les configurations de serveurs web.
+### ⚡ Attaque : Brute force/dictionnaire
 
-#### Attaque: Scan de vulnérabilités sur un serveur web
-*Détails de l'attaque :*  
-Exécuter un scan complet des vulnérabilités d’un serveur web.
+#### Outil : **Gobuster**
+- **Description** : Fuzz de répertoires/fichiers web.
+- **Installation** :  
+  - `sudo apt install gobuster`
+- **Commande** :  
+  - `gobuster dir -u http://[IP ou domaine] -w /usr/share/wordlists/dirb/common.txt`
 
-###### Commande: Lancer un scan avec Nikto
-```bash
-nikto -h http://site.com
-```
-Détails :
-- Cible : http://site.com.
-- Analyse des vulnérabilités connues du serveur web.
-
----
-
-## Précautions Légales & Disclaimer
-**Attention :**  
-L’utilisation de ces outils et commandes doit être réalisée dans un cadre légal et exclusivement en environnement de test. Toute utilisation malveillante est strictement interdite.
+#### Outil : **Hydra**
+- **Description** : Brute-force login sur des services (HTTP, FTP, SSH…).
+- **Installation** :  
+  - `sudo apt install hydra`
+- **Commande** :  
+  - `hydra -l admin -P /usr/share/wordlists/rockyou.txt ssh://[IP cible]`
 
 ---
 
-## Références & Ressources
-- [Sqlmap Official Website](https://sqlmap.org/)
-- [Burp Suite Community Edition](https://portswigger.net/burp/communitydownload)
-- [Nikto Project](https://cirt.net/Nikto2)
-- [OWASP Web Security Testing Guide](https://owasp.org/www-project-web-security-testing-guide/)
-```
+### ⚡ Attaque : Fuzzing
+
+#### Outil : **WFuzz**
+- **Description** : Fuzzer d’URL, headers, données POST, etc.
+- **Installation** :  
+  - `sudo apt install wfuzz`
+- **Commande** :  
+  - `wfuzz -c -w /usr/share/wordlists/dirb/common.txt --hc 404 http://[IP]/FUZZ`
+
+---
+
+### ⚡ Attaque : Injection
+
+#### Outil : **SQLmap**
+- **Description** : Injection SQL automatisée.
+- **Installation** :  
+  - `sudo apt install sqlmap`
+- **Commande** :  
+  - `sqlmap -u "http://[IP]/vulnerable.php?id=1" --batch --dbs`
+
+#### Outil : **XSStrike**
+- **Description** : Teste l’injection de code (XSS) sur les applications web.
+- **Installation** :  
+  - `git clone https://github.com/s0md3v/XSStrike.git`
+- **Commande** :  
+  - `python3 XSStrike/xsstrike.py -u "http://[IP]/search.php?q=test"`
+
+---
+
+## 3. Contribution
+
+> Précisez l’attaque, l’outil, expliquez l’intérêt, et ajoutez exemples et bonnes pratiques.
