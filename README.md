@@ -272,9 +272,7 @@ Ce projet est sous licence MIT : open-source, vous pouvez l’utiliser, l’ad
 
 ```
 
----
-
-**C’est structuré, explicite, pédagogique et prêt pour le partage sur Github.**  
-Personnalise le nom du repo, l’auteur, les liens, la licence si besoin !  
-Si tu veux une version anglaise, un “quick start”, un modèle PDF de rapport : demande 😉
-```
+BERRUET Matthieu
+HAYE Pierre ELoi
+BEN KHALED Ziyed
+SENEZERGUES Victor
