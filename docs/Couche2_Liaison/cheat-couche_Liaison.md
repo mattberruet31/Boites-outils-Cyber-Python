@@ -1,141 +1,85 @@
-# Couche 2 (Liaison) – Attaques et Outils
+# Couche 2 – Liaison
 
-**Version Testée :**
-- Ettercap 0.8.x
-- Bettercap 2.x
-- Arpspoof (dsniff)
-- Cain and Abel (Windows)
+## 1. Types d'attaques sur la couche Liaison
 
-**Description :**  
-Ce document recense les outils et attaques disponibles pour la couche Liaison du modèle OSI. La couche 2 gère le contrôle d’accès au média et la transmission des trames sur le réseau local.  
-Les attaques typiques incluent le spoofing ARP, les attaques MITM (Man-In-The-Middle) et l’injection de paquets.  
----
+- **ARP Spoofing/Poisoning**  
+  Détourner le trafic local en envoyant de fausses informations ARP pour se faire passer pour une autre machine (ex. : MITM).
 
-### Outil: Ettercap
-**Description :**  
-Ettercap est un outil puissant pour l'interception de trafic et l'exécution d'attaques MITM par ARP spoofing. Il permet de capturer, modifier et injecter du trafic réseau en temps réel.
+- **MAC Spoofing**  
+  Changer l’adresse MAC de son interface pour usurper une identité réseau ou contourner des restrictions.
 
-#### Attaque: ARP Spoofing / MITM
-*Détails de l'attaque :*  
-Positionner l'attaquant entre la victime et la passerelle pour intercepter le trafic réseau.
+- **Flooding (MAC, ARP, Switch)**  
+  Saturer les tables des switchs pour passer le trafic en mode hub, ou générer un déni de service local.
 
-##### Commandes Clés
-
-###### Commande: Lancer Ettercap en mode texte
-```bash
-ettercap -T
-```
-Détails :
-- Utilisation en mode texte pour l'interception.
-
-###### Commande: ARP Spoofing ciblé
-```bash
-ettercap -T -M arp:remote /192.168.1.1// /192.168.1.2//
-```
-Détails :
-- Cibler la passerelle (192.168.1.1) et la victime (192.168.1.2).
-
-###### Commande: Sniffer et logger
-```bash
-ettercap -T -M arp -i eth0 -L logfile
-```
-Détails :
-- Enregistrer le trafic sur l'interface eth0.
-
-#### Attaque: Injection de paquets HTTP
-*Détails de l'attaque :*  
-Modifier en temps réel le trafic HTTP non chiffré pour injecter du code malveillant.
-
-##### Commandes Clés
-
-###### Commande: Injection de scripts HTTP
-```bash
-ettercap -T -M arp:remote -i eth0 -F filter.ec
-```
-Détails :
-- Utilise un fichier de filtre (filter.ec) pour modifier le trafic HTTP.
+- **Sniffing local**  
+  Intercepter le trafic sur le LAN grâce à un mode promiscuous, souvent après une attaque ARP/MAC.
 
 ---
 
-### Outil: Bettercap
-**Description :**  
-Bettercap est un framework moderne de MITM et d'analyse réseau, offrant une interface web et des modules extensibles pour diverses attaques sur le réseau local.
+## 2. Outils et méthodes
 
-#### Attaque: ARP Spoofing avancé
-*Détails de l'attaque :*  
-Manipuler les tables ARP pour rediriger le trafic d'une cible vers l'attaquant.
+### ⚡ Attaque : ARP Spoofing
 
-##### Commandes Clés
+#### Outil : **Ettercap**
+- **Description** : Un must pour les attaques Man-in-the-Middle sur réseau local (ARP, DNS, etc.)
+- **Pourquoi l’utiliser ?** :  
+  - Automatisation, interfaces graphique/CLI
+  - Peut injecter des paquets, capturer des credentials
+- **Installation** :  
+  - `sudo apt install ettercap-graphical`
+- **Commande** :  
+  - `sudo ettercap -G` (GUI), suivre les menus pour lancer ARP spoofing
 
-###### Commande: Lancer Bettercap en mode interactif
-```bash
-bettercap -I eth0
-```
-Détails :
-- Utilisation de l'interface eth0.
-
-###### Commande: Exécuter un caplet ARP spoofing
-```bash
-bettercap -X -caplet arp.spoof
-```
-Détails :
-- Utilise le caplet "arp.spoof" pour lancer l'attaque.
-
-#### Attaque: Sniffing de paquets
-*Détails de l'attaque :*  
-Capturer et analyser le trafic réseau pour détecter des vulnérabilités ou informations sensibles.
-
-##### Commandes Clés
-
-###### Commande: Capture de paquets en temps réel
-```bash
-bettercap -X -I eth0
-```
-Détails :
-- Affichage en temps réel des paquets.
+#### Outil : **arpspoof**
+- **Description** : Petit outil CLI pour ARP poisoning rapide.
+- **Installation** :  
+  - `sudo apt install dsniff`
+- **Commande** :  
+  - `sudo arpspoof -i eth0 -t [IP cible] [IP passerelle]`
 
 ---
 
-### Outil: Arpspoof (dsniff)
-**Description :**  
-Arpspoof, issu du paquet dsniff, est un outil simple pour effectuer du spoofing ARP et détourner le trafic dans un LAN.
+### ⚡ Attaque : MAC Spoofing
 
-#### Attaque: Détournement ARP simple
-*Détails de l'attaque :*  
-Rediriger le trafic réseau d'une cible en falsifiant les réponses ARP.
-
-##### Commandes Clés
-
-###### Commande: Spoofing vers la cible
-```bash
-arpspoof -i eth0 -t 192.168.1.2 192.168.1.1
-```
-Détails :
-- Cible : 192.168.1.2, passerelle : 192.168.1.1.
-
-###### Commande: Spoofing vers la passerelle
-```bash
-arpspoof -i eth0 -t 192.168.1.1 192.168.1.2
-```
-Détails :
-- Inverse la cible pour rediriger le trafic dans les deux sens.
+#### Outil : **Macchanger**
+- **Description** : Change l’adresse MAC d’une interface à la volée.
+- **Pourquoi l’utiliser ?** :  
+  - Bypass filtrage MAC, anonymisation
+- **Installation** :  
+  - `sudo apt install macchanger`
+- **Commande** :  
+  - `sudo macchanger -r eth0`
+- **Note** : Nécessite de down/up l’interface :  
+    - `sudo ip link set eth0 down`
+    - `sudo macchanger -r eth0`
+    - `sudo ip link set eth0 up`
 
 ---
 
-### Outil: Cain and Abel
-**Description :**  
-Cain and Abel est un outil de récupération de mots de passe pour Windows, qui inclut des fonctionnalités d'ARP spoofing et de capture de trafic (interface graphique).
+### ⚡ Attaque : Flooding
 
-#### Attaque: ARP Spoofing et capture d'identifiants
-*Détails de l'attaque :*  
-Utiliser Cain and Abel pour réaliser du spoofing ARP et récupérer des informations sensibles via l'interface graphique.
+#### Outil : **Macof**
+- **Description** : Inonde la table MAC d’un switch, pour repasser en mode hub (sniffing possible).
+- **Installation** :  
+  - `sudo apt install dsniff`
+- **Commande** :  
+  - `sudo macof -i eth0`
+- **Précaution** : Peut perturber tout le réseau local ! Ne jamais utiliser sans autorisation.
 
-##### Commandes Clés
+---
 
-###### Commande: Lancer Cain and Abel
-```bash
-# Démarrer Cain and Abel via l'interface Windows.
-```
-Détails :
-- Utiliser l'interface graphique pour lancer l'attaque et récupérer les identifiants.
-```
+### ⚡ Attaque : Sniffing local
+
+#### Outil : **Wireshark** ou **tcpdump**
+- **Description** : Capture et analyse de paquets.
+- **Installation** :  
+  - `sudo apt install wireshark tcpdump`
+- **Commandes** :  
+  - `sudo tcpdump -i eth0`  
+  - Lancer Wireshark, choisir l’interface cible.
+
+---
+
+## 3. Contribution
+
+> Pour chaque nouvelle attaque, détaillez le contexte et l’outil utilisé, donnez si possible des exemples de commandes.
