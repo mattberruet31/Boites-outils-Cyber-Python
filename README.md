@@ -1,146 +1,190 @@
 ```markdown
-# Pentest Toolkit
+# 🛠️ Pentest Toolkit
 
-Pentest Toolkit est un outil interactif en Bash conçu pour faciliter la gestion et l’exécution de commandes de tests de sécurité (pentesting) via des *cheatsheets* organisées en fichiers Markdown.  
-Chaque fichier Markdown correspond à une couche du modèle OSI et recense les outils, attaques et commandes associés.
+Pentest Toolkit est un outil open-source interactif en Python, pensé pour accompagner les professionnels et étudiants en cybersécurité dans leurs tests d’intrusion (pentest) réseau, tout en centralisant documentation, commandes, outils et rapport de test final.
 
 ---
 
-## Structure du Projet
+## 🚩 Objectif du projet
 
-```plaintext
-.
-├── docs
-│   ├── Couche1_Physique
-│   │   └── cheat-couche_Physique.md
-│   ├── Couche2_Liaison
-│   │   └── cheat-couche_Liaison.md
-│   ├── Couche3_Reseau
-│   │   └── cheat-couche_Reseau.md
-│   ├── Couche4_Transport
-│   │   └── cheat-couche_Transport.md
-│   ├── Couche5-7_Application
-│   │   └── cheat-couche_Application.md
-│   └── Couche8_Social-Engineering
-│       └── cheat-couche_Social-Engineering.md
-├── .gitignore
-├── README.md
-└── pentest_toolkit.sh
+- **Standardiser et accélérer les tests de sécurité** grâce à des “cheatsheets” structurées (une par couche du modèle OSI), documentant pour chaque couche :
+    - Les types d’attaques possibles,
+    - Les outils associés,
+    - Les commandes à exécuter,
+    - Et une aide pas-à-pas automatisée.
+- **Générer automatiquement un rapport complet et professionnel** de la session de pentest.
+- **Permettre à la communauté** d’ajouter/adapter les cheatsheets facilement pour garder l’outil à jour.
+
+---
+
+## 🗂️ Structure du projet
+
 ```
 
-- **docs/** : Contient les dossiers pour chaque couche (ex. Couche1_Physique, Couche2_Liaison, etc.).  
-- Chaque dossier possède un fichier `cheat-couche_*.md` listant les outils, attaques et commandes pour cette couche.
-- **pentest_toolkit.sh** : Le script principal en Bash, qui lit ces fichiers Markdown et propose une interface interactive.
-- **.gitignore** : Liste des fichiers ou dossiers ignorés par Git.
-- **README.md** : Ce document expliquant le fonctionnement et la structure du projet.
+.
+├── docs/
+│   ├── Couche1\_Physique/
+│   │   └── cheat-couche\_Physique.md
+│   ├── Couche2\_Liaison/
+│   │   └── cheat-couche\_Liaison.md
+│   ├── Couche3\_Reseau/
+│   │   └── cheat-couche\_Reseau.md
+│   ├── Couche4\_Transport/
+│   │   └── cheat-couche\_Transport.md
+│   ├── Couche5-7\_Application/
+│   │   └── cheat-couche\_Application.md
+│   ├── Couche8\_Social-Engineering/
+│   │   └── cheat-couche\_Social-Engineering.md
+├── logs/            # Rapports générés automatiquement (Markdown)
+├── pentest.py       # Script principal (à lancer)
+├── README.md        # Ce fichier
+
+````
 
 ---
 
-## Fonctionnement de l’Outil
+## ⚡ Fonctionnement de l’outil
 
-1. **Sélection de la couche**  
-   - Le script scanne le dossier `docs/` pour lister toutes les couches disponibles (Couche1_Physique, Couche2_Liaison, etc.).  
-   - L’utilisateur choisit la couche souhaitée.
+1. **Lance le script Python** :  
+   ```bash
+   python3 pentest.py
+````
 
-2. **Parcours de la cheat-sheet**  
-   - Pour la couche sélectionnée, le script lit le fichier Markdown correspondant et en extrait :  
-     - Les **outils** (lignes débutant par `### Outil:`).  
-     - Les **attaques** associées à chaque outil (lignes débutant par `#### Attaque:`).  
-     - Les **commandes** pour chaque attaque (lignes débutant par `###### Commande:`), suivies d’un bloc de code (```bash ... ```) et d’une section `Détails :`.
+2. **Renseigne les informations générales** (testeur, client, bien à tester, etc.)
 
-3. **Exécution et journalisation**  
-   - L’utilisateur sélectionne un outil, puis une attaque, puis la commande à exécuter.  
-   - Après confirmation, la commande est exécutée et les actions sont enregistrées dans un fichier log.
+3. **Navigue via des menus interactifs** :
 
-4. **Génération d’un rapport**  
-   - Une option du script permet de générer un rapport complet de test de sécurité.  
-   - Ce rapport inclut :  
-     - Les informations générales (date, nom du test, outil, commande, cible, etc.).  
-     - Les logs enregistrés.  
-     - Les observations, la conclusion et les recommandations.
+   * Choix de la couche réseau à attaquer,
+   * Choix du type d’attaque,
+   * Choix de l’outil,
+   * Saisie interactive des paramètres (IP, port, etc.)
+   * Installation automatique des outils si besoin,
+   * Sélection du mode d’exécution de la commande :
+
+     * Attente du résultat (pour les scans, brute force, etc.),
+     * Terminal séparé (pour outils interactifs ou Wireshark, shell...),
+     * Arrière-plan.
+   * Possibilité d’enchaîner plusieurs attaques/tests dans la même session.
+
+4. **Chaque action** est enregistrée (avec le résultat réel des commandes si capturé).
+
+5. **En fin de session**, ajoute un commentaire et une conclusion pour générer le rapport final.
 
 ---
 
-## Comment Ajouter ou Modifier du Contenu
+## 📋 Exemple de rapport généré
 
-Pour enrichir l’outil ou adapter les tests :
+> Un rapport Markdown est généré dans le dossier `logs/` à chaque session :
+>
+> ```
+> # Rapport de Test de Sécurité
+> ## Informations Générales
+> - **Date du test** : 04/06/2025
+> - **Testeur** : alice
+> - **Client** : ACME Corp
+> ---
+> ## Bien Essentiel Testé
+> - **Bien essentiel** : Serveur Web
+> - **Risque associé** : Exposition aux attaques réseau
+> ---
+> ## Attaque réalisée 1 : Scan de ports
+> - **Outil utilisé** : nmap
+> - **Commande exécutée** : `nmap -sS 192.168.1.1`
+> ### Résultats du Test
+> ```
+>
+> Starting Nmap 7.94...
+> PORT   STATE SERVICE
+> 80/tcp open  http
+>
+> ```
+> ---
+> ## Commentaires
+> Tout s’est bien passé.
+> ---
+> ## Conclusion
+> Le test a permis de détecter des ports ouverts.
+> ```
 
-1. **Ajouter une nouvelle couche**  
-   - Créez un nouveau dossier dans `docs/` (par ex. `Couche9_QuelqueChose`).  
-   - Ajoutez-y un fichier Markdown (ex. `cheat-couche_QuelqueChose.md`) suivant la structure attendue.
+---
 
-2. **Ajouter un outil**  
-   - Dans le fichier Markdown de la couche concernée, ajoutez une section commençant par :
-     ```markdown
-     ### Outil: NomDeLOutil
-     ```
-   - Décrivez l’outil (fonctionnalités, installation…).
+## ✍️ **Ajouter/Modifier du contenu pour étoffer le projet**
 
-3. **Ajouter une attaque**  
-   - Sous la section de l’outil, ajoutez :
-     ```markdown
-     #### Attaque: NomDeLattaque
-     ```
-   - Donnez un court descriptif de l’attaque.
+Tout est documenté sous format **Markdown** dans `docs/` par couche.
 
-4. **Ajouter une commande**  
-   - Sous la section de l’attaque, ajoutez :
-     ```markdown
-     ###### Commande: NomDeLaCommande
-     ```  
-   - Immédiatement après, insérez un bloc de code (entre ````bash et ``````) et terminez par une section `Détails :`.
+### ➕ **Pour ajouter une nouvelle attaque ou outil :**
 
-**Exemple de bloc commande** :
+1. Ouvre le fichier markdown de la couche concernée dans `docs/CoucheX/cheat-couche_X.md`.
+
+2. Repère la section :
+
+   ```markdown
+   ### ⚡ Attaque : Nom de l'attaque
+   ```
+
+3. Pour **ajouter une attaque**, copie-colle le modèle suivant :
+
+   ```markdown
+   ### ⚡ Attaque : Nouvelle attaque
+
+   #### Outil : Nom de l'outil
+   **Description** : Ce que fait l’outil.
+   **Installation** : sudo apt install outil
+   **Commande** : outil --flag [parametre|valeur_par_defaut]
+   **Info** : Optionnel, tips ou consigne utilisateur.
+   ```
+
+4. Pour **ajouter un outil à une attaque existante** :
+   Insère simplement un nouveau bloc “Outil” dans la section de l’attaque concernée.
+
+5. **Les paramètres entre crochets** `[parametre|valeur_par_defaut]` seront demandés automatiquement par le script (ex : `[IP cible|192.168.1.1]`).
+
+### 🛠️ **Exemple d’ajout dans le markdown** :
 
 ```markdown
-###### Commande: Exemple
-```bash
-echo "Hello, world!"
+### ⚡ Attaque : Scan de ports
+
+#### Outil : Nmap
+**Description** : Scanner de ports.
+**Installation** : sudo apt install nmap
+**Commande** : nmap -sS [IP cible|192.168.1.1]
 ```
-Détails :
-- Affiche "Hello, world!" dans le terminal.
-```
 
-Assurez-vous de ne pas avoir d’espaces superflus avant les marqueurs (`###`, `####`, `######`, ```bash) pour que le script puisse extraire correctement les informations.
+* Les modifications sont prises en compte immédiatement sans relancer le script.
 
 ---
 
-## Utilisation
+## 💡 **Bonnes pratiques pour contribuer**
 
-1. **Rendre le script exécutable**  
-   ```bash
-   chmod +x pentest_toolkit.sh
-   ```
-
-2. **Lancer le script**  
-   ```bash
-   ./pentest_toolkit.sh
-   ```
-
-3. **Naviguer dans l’interface**  
-   - Sélectionnez la couche, l’outil, l’attaque, et enfin la commande à exécuter.  
-   - Choisissez ensuite de générer un rapport complet de test de sécurité si besoin.
+* **Respecte la structure** : chaque attaque commence par `### ⚡ Attaque : ...`
+* **Donne toujours la vraie commande shell** sous `**Commande** :`
+* Utilise `**Info** :` pour les conseils non exécutables.
+* Si besoin d’un paramètre utilisateur, mets-le entre crochets.
 
 ---
 
-## Personnalisation et Extensions
+## 🚀 Pour aller plus loin
 
-- **Adapter les commandes** : Vous pouvez modifier ou compléter les commandes existantes dans les fichiers Markdown.  
-- **Enrichir les attaques** : Ajoutez de nouveaux scénarios d’attaque ou de nouveaux outils selon vos besoins.  
-- **Rapport détaillé** : Le script génère un fichier `full_report.md` regroupant les informations de test (logs, conclusion, recommandations…).
-
----
-
-## Licence
-
-*(Indiquez ici la licence applicable, par ex. MIT, GPL, etc.)*
+* Ajoute de nouvelles couches, types d’attaques, ou outils émergents !
+* Propose des modèles de rapports PDF, exports CSV, etc.
+* Forke ce repo et contribue, tout ajout documenté est le bienvenu.
 
 ---
 
-## Contact
+## ❓ Support & contact
 
-Pour toute question ou contribution, n’hésitez pas à contacter **[BERRUET]** à **[matthieu.berruet@campus-igs-toulouse.fr**.
+Pour toute question ou suggestion, ouvre une [issue](https://github.com/tonrepo/tonprojet/issues) ou propose une [pull request](https://github.com/tonrepo/tonprojet/pulls).
+
+---
+
+**Licence : MIT**
+Projet libre, tu peux l’utiliser et l’adapter sans restriction, du moment que tu conserves la mention d’origine.
 
 ```
 
 ---
+
+**Personnalise les liens, le nom du repo et les contacts si besoin.**  
+Ce README est vraiment conçu pour être “ready-to-push” sur Github 🚀  
+Dis-moi si tu veux une version anglaise, un guide contributeur détaillé, ou un badge style “pentest friendly” !
+```
